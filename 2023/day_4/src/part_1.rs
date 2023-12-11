@@ -1,11 +1,13 @@
 struct Card {
+    id: u32,
     winning_numbers: Vec<u32>,
     numbers: Vec<u32>,
 }
 
 impl Card {
-    fn new(winning_numbers: Vec<u32>, numbers: Vec<u32>) -> Self {
+    fn new(id: u32, winning_numbers: Vec<u32>, numbers: Vec<u32>) -> Self {
         Self {
+            id,
             winning_numbers,
             numbers,
         }
@@ -37,10 +39,12 @@ pub fn process(input: &str) -> u32 {
 }
 
 fn process_line(line: &str) -> Card {
-    let (_, numbers) = line.split_once(":").unwrap();
+    let (card, numbers) = line.split_once(":").unwrap();
+    let (_, id) = card.split_once(" ").unwrap();
     let (winning_numbers, numbers) = numbers.split_once("|").unwrap();
 
     Card::new(
+        id.trim().parse().unwrap(),
         winning_numbers
             .trim()
             .split(" ")
