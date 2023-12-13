@@ -14,10 +14,24 @@ impl DestinationToSource {
         }
     }
 
+    fn is_source_in_range(&self, source: u64) -> bool {
+        let diff = source as i64 - self.range as i64;
+        source == self.source || (source > self.source && diff < self.source as i64)
+    }
+
     fn is_destination_in_range(&self, destination: u64) -> bool {
         let diff = destination as i64 - self.range as i64;
         destination == self.destination
             || (destination > self.destination && diff < self.destination as i64)
+    }
+
+    fn get_destination(&self, source: u64) -> Option<u64> {
+        if !self.is_source_in_range(source) {
+            None
+        } else {
+            let diff = self.destination as i64 - self.source as i64;
+            Some((source as i64 + diff) as u64)
+        }
     }
 
     fn get_source(&self, destination: u64) -> Option<u64> {
@@ -228,6 +242,23 @@ humidity-to-location map:
         let result = process(input);
 
         assert_eq!(result, 35);
+    }
+
+    #[test]
+    fn can_get_destination() {
+        let map = DestinationToSource::new(50, 98, 2);
+        assert_eq!(map.get_destination(98), Some(50));
+        assert_eq!(map.get_destination(99), Some(51));
+        assert_eq!(map.get_destination(100), None);
+
+        let map = DestinationToSource::new(52, 50, 48);
+        for i in 0..map.range {
+            let source = 50 + i;
+            let destination = 52 + i;
+            assert_eq!(map.get_destination(source), Some(destination));
+        }
+
+        assert_eq!(map.get_destination(98), None);
     }
 
     #[test]
