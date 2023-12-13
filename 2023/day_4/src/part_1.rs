@@ -1,5 +1,5 @@
-struct Card {
-    id: u32,
+pub struct Card {
+    pub id: u32,
     winning_numbers: Vec<u32>,
     numbers: Vec<u32>,
 }
@@ -13,7 +13,7 @@ impl Card {
         }
     }
 
-    fn points(&self) -> u32 {
+    pub fn matches(&self) -> u32 {
         let mut matches = 0;
 
         for &number in &self.numbers {
@@ -22,7 +22,11 @@ impl Card {
             }
         }
 
-        Self::points_for_match(matches)
+        matches
+    }
+
+    fn points(&self) -> u32 {
+        Self::points_for_match(self.matches())
     }
 
     fn points_for_match(number_of_matches: u32) -> u32 {
@@ -38,7 +42,7 @@ pub fn process(input: &str) -> u32 {
     input.lines().map(|line| process_line(line).points()).sum()
 }
 
-fn process_line(line: &str) -> Card {
+pub fn process_line(line: &str) -> Card {
     let (card, numbers) = line.split_once(":").unwrap();
     let (_, id) = card.split_once(" ").unwrap();
     let (winning_numbers, numbers) = numbers.split_once("|").unwrap();
